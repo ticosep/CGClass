@@ -122,6 +122,11 @@ void OpenGLWidget::createShaders()
     fs.close();
 
 }
+void OpenGLWidget::destroyShaders()
+{
+    makeCurrent();
+    glDeleteProgram(shaderProgram);
+}
 
 void OpenGLWidget::resizeGL(int width, int height)
 {
