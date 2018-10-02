@@ -1,10 +1,12 @@
-attribute highp vec4 qt_Vertex;
-attribute highp vec4 qt_MultiTexCoord0;
-uniform highp mat4 qt_ModelViewProjectionMatrix;
-varying highp vec4 qt_TexCoord0;
-
-void main(void)
-{
-    gl_Position = qt_ModelViewProjectionMatrix * qt_Vertex;
-    qt_TexCoord0 = qt_MultiTexCoord0;
-}
+    #version 410
+    //(in)put variables processed in parallel
+    layout(location = 0) in vec4 vPosition;
+    layout(location = 1) in vec4 vColors;
+    //(out)put variable interpolated at fragment shader raster
+    out vec4 v2fcolor;
+    void main ()
+    {
+        // gl_Position - >out builtin variable
+        gl_Position = vPosition;
+        v2fcolor = vColors;
+    }
