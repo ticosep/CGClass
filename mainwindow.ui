@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>604</width>
-    <height>482</height>
+    <width>605</width>
+    <height>531</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,7 +28,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>400</y>
+      <y>410</y>
       <width>70</width>
       <height>17</height>
      </rect>
@@ -40,13 +40,42 @@
      <bool>true</bool>
     </property>
    </widget>
+   <widget class="QCheckBox" name="mudaDig">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>410</y>
+      <width>70</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>muda dig</string>
+    </property>
+   </widget>
+   <widget class="QSlider" name="RGB">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>410</y>
+      <width>160</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>250</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>604</width>
+     <width>605</width>
      <height>21</height>
     </rect>
    </property>
@@ -69,6 +98,8 @@
    <header>openglwidget.h</header>
    <slots>
     <slot>toggleBackgroundColor(bool)</slot>
+    <slot>changeDiagonal(bool)</slot>
+    <slot>rgbChange(int)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -83,6 +114,38 @@
     <hint type="sourcelabel">
      <x>54</x>
      <y>441</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>304</x>
+     <y>237</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>mudaDig</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>openGLWidget</receiver>
+   <slot>changeDiagonal(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>144</x>
+     <y>441</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>304</x>
+     <y>237</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>RGB</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>openGLWidget</receiver>
+   <slot>rgbChange(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>329</x>
+     <y>452</y>
     </hint>
     <hint type="destinationlabel">
      <x>304</x>

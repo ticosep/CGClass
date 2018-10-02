@@ -131,15 +131,20 @@ void OpenGLWidget::createVBOs()
 {
     makeCurrent();
     destroyVBOs();
-    vertices = std::make_unique<QVector4D[]>(4);
+    vertices = std::make_unique<QVector4D[]>(7);
     colors = std::make_unique<QVector4D[]>(4);
-    indices = std::make_unique<unsigned int[]>(2 * 3);
+    indices = std::make_unique<unsigned int[]>(3 * 3);
 
     // Create four vertices to define a square
     vertices[0] = QVector4D( -0.5, -0.5, 0, 1);
     vertices[1] = QVector4D(0.5, -0.5, 0, 1);
     vertices[2] = QVector4D(0.5, 0.5 , 0, 1);
     vertices[3] = QVector4D( -0.5, 0.5, 0, 1);
+
+    // Draw a triangle
+    vertices[4] = QVector4D( -0.5, 0.5, 0, 1);
+    vertices[5] = QVector4D( 0, 1, 0, 1);
+    vertices[6] = QVector4D( 0.5, 0.5, 0, 1);
 
     // Create colors for the vertices
     colors[0] = QVector4D(1, 0, 0, 1); // Red
@@ -155,21 +160,30 @@ void OpenGLWidget::createVBOs()
     indices[4] = 3;
     indices[5] = 0;
 
+    // Topology of the triangle
+    indices[6] = 4;
+    indices[7] = 5;
+    indices[8] = 6;
+
+
+
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     glGenBuffers(1 , &vboVertices);
     glBindBuffer(GL_ARRAY_BUFFER , vboVertices);
-    glBufferData(GL_ARRAY_BUFFER , 4 * sizeof(QVector4D), vertices.get(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER , 7 * sizeof(QVector4D), vertices.get(), GL_STATIC_DRAW);
     glVertexAttribPointer(0 , 4 , GL_FLOAT , GL_FALSE , 0 , nullptr);
     glEnableVertexAttribArray(0);
+
     glGenBuffers(1 , &vboColors);
-    glBindBuffer(GL_ARRAY_BUFFER , vboColors);
-    glBufferData(GL_ARRAY_BUFFER , 4 * sizeof ( QVector4D ) , colors.get(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, vboColors);
+    glBufferData(GL_ARRAY_BUFFER, 4 * sizeof ( QVector4D ) , colors.get(), GL_STATIC_DRAW);
     glVertexAttribPointer(1 , 4 , GL_FLOAT , GL_FALSE , 0 , nullptr);
     glEnableVertexAttribArray(1);
+
     glGenBuffers (1 , &vboIndices);
     glBindBuffer (GL_ELEMENT_ARRAY_BUFFER , vboIndices);
-    glBufferData (GL_ELEMENT_ARRAY_BUFFER , 2 * 3 * sizeof ( unsigned int ) ,indices.get(), GL_STATIC_DRAW);
+    glBufferData (GL_ELEMENT_ARRAY_BUFFER , 3 * 3 * sizeof ( unsigned int ) ,indices.get(), GL_STATIC_DRAW);
 
 }
 
@@ -203,10 +217,69 @@ void OpenGLWidget::paintGL()
     glClearColor(0, 0, 0, 1);
     glUseProgram(shaderProgram);
     glBindVertexArray(vao);
-    glDrawElements(GL_TRIANGLES, 2 * 3, GL_UNSIGNED_INT,0);
+    glDrawElements(GL_TRIANGLES, 3 * 3, GL_UNSIGNED_INT,0);
 
 }
+void OpenGLWidget::rgbChange(int rgb)
+{
+    makeCurrent();
 
+    glBindBuffer(GL_ARRAY_BUFFER, vboColors);
+
+    QVector4D *colors =(QVector4D *)glMapBufferRange(GL_ARRAY_BUFFER, 0, 4 * sizeof (QVector4D),GL_MAP_WRITE_BIT);
+
+    if(rgb < 100) {
+        colors[0] = QVector4D(0, 1, 0, 1); // Green
+        colors[1] = QVector4D(0, 1, 0, 1); // Green
+        colors[2] = QVector4D(0, 0, 1, 1); // Blue
+        colors[3] = QVector4D(0, 0, 1, 1); // Blue
+    } else if (rgb < 200) {
+        colors[0] = QVector4D(0, 0, 1, 1); // Blue
+        colors[1] = QVector4D(0, 0, 1, 1); // Blue
+        colors[2] = QVector4D(0, 0, 1, 1); // Blue
+        colors[3] = QVector4D(0, 0, 1, 1); // Blue
+    } else {
+        colors[0] = QVector4D(1, 0, 0, 1); // Red
+        colors[1] = QVector4D(0, 1, 0, 1); // Green
+        colors[2] = QVector4D(0, 0, 1, 1); // Blue
+        colors[3] = QVector4D(1, 1, 0, 1); // Yellow
+    }
+
+
+
+
+    glUnmapBuffer(GL_ARRAY_BUFFER);
+    update();
+}
+void OpenGLWidget::changeDiagonal(bool changeDiagonal){
+
+
+    makeCurrent();
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIndices);
+    unsigned int *indices =(unsigned int *)glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0, 2*3*sizeof(unsigned int),
+    GL_MAP_WRITE_BIT);
+
+    if(changeDiagonal){
+        indices [0] = 0;
+        indices [1] = 1;
+        indices [2] = 3;
+        indices [3] = 1;
+        indices [4] = 2;
+        indices [5] = 3;
+    }else{
+        indices[0] = 0;
+        indices[1] = 1;
+        indices[2] = 2;
+        indices[3] = 2;
+        indices[4] = 3;
+        indices[5] = 0;
+    }
+
+    glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+
+    update();
+}
 void OpenGLWidget::toggleBackgroundColor(bool changeBColor){
 
     makeCurrent();

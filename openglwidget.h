@@ -42,6 +42,8 @@ signals:
 
 public slots:
     void toggleBackgroundColor(bool);
+    void changeDiagonal(bool);
+    void rgbChange(int);
 
 };
 
